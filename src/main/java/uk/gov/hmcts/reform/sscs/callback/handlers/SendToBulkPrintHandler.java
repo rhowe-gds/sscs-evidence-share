@@ -92,8 +92,13 @@ public class SendToBulkPrintHandler implements CallbackHandler<SscsCaseData> {
 
     @Override
     public void handle(CallbackType callbackType, Callback<SscsCaseData> callback) {
+        if (!canHandle(callbackType, callback)) {
+            throw new IllegalStateException("Cannot handle callback");
+        }
+
         SscsCaseData caseData = callback.getCaseDetails().getCaseData();
         BulkPrintInfo bulkPrintInfo = null;
+
         try {
             bulkPrintInfo = bulkPrintCase(callback);
         } catch (Exception e) {
@@ -121,6 +126,7 @@ public class SendToBulkPrintHandler implements CallbackHandler<SscsCaseData> {
     private void updateCaseToSentToDwp(Callback<SscsCaseData> sscsCaseDataCallback, SscsCaseData caseData,
                                        BulkPrintInfo bulkPrintInfo) {
         if (bulkPrintInfo != null) {
+            caseData.setHmctsDwpState("sentToDwp");
             ccdService.updateCase(caseData, Long.valueOf(caseData.getCcdCaseId()),
                 EventType.SENT_TO_DWP.getCcdType(), SENT_TO_DWP, bulkPrintInfo.getDesc(),
                 idamService.getIdamTokens());
@@ -159,8 +165,6 @@ public class SendToBulkPrintHandler implements CallbackHandler<SscsCaseData> {
                         .allowedTypeForBulkPrint(true)
                         .desc(buildEventDescription(existingCasePdfs, id.get()))
                         .build();
-
-                    updateSscsDocumentsWithFurtherEvidenceIssuedFlag(sscsDocuments);
 
                     return info;
                 } else {
@@ -242,16 +246,6 @@ public class SendToBulkPrintHandler implements CallbackHandler<SscsCaseData> {
             && !doc.getValue().getDocumentType().equals("sscs1"));
 
         return Stream.concat(Stream.concat(dlDocs, appealDocs), allOtherDocs).collect(Collectors.toList());
-    }
-
-    private void updateSscsDocumentsWithFurtherEvidenceIssuedFlag(List<SscsDocument> sscsDocuments) {
-
-        for (SscsDocument doc : sscsDocuments) {
-            if (doc.getValue().getEvidenceIssued() != null && doc.getValue().getEvidenceIssued().equals("No")) {
-                // Only set to Yes if previous value was No (This is only set for further evidence)
-                doc.getValue().setEvidenceIssued("Yes");
-            }
-        }
     }
 
     private byte[] toBytes(SscsDocument sscsDocument) {

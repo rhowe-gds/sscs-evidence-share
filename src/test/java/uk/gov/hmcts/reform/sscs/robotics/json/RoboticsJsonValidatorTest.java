@@ -66,12 +66,6 @@ public class RoboticsJsonValidatorTest {
     }
 
     @Test(expected = RoboticsValidationException.class)
-    public void givenInvalidInputForPhoneNumber_throwExceptionWhenValidatingAgainstSchema() throws ValidationException, IOException {
-        jsonData = updateEmbeddedProperty(jsonData.toString(), "0798", "appellant", "phoneNumber");
-        roboticsJsonValidator.validate(jsonData);
-    }
-
-    @Test(expected = RoboticsValidationException.class)
     public void givenInvalidInputForCaseCreatedDate_throwExceptionWhenValidatingAgainstSchema() throws ValidationException, IOException {
         jsonData = updateEmbeddedProperty(jsonData.toString(), "2018/06/01", "caseCreatedDate");
         roboticsJsonValidator.validate(jsonData);
@@ -142,7 +136,7 @@ public class RoboticsJsonValidatorTest {
     private static JSONObject updateEmbeddedProperty(String json, String value, String... keys) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Map map = objectMapper.readValue(json, Map.class);
+        Map<Object, String> map = objectMapper.readValue(json, Map.class);
 
         Map t = map;
         for (int i = 0; i < keys.length - 1; i++) {

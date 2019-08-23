@@ -48,7 +48,7 @@ document_management.url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store:4506}
 
 send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://localhost:4021}
-  enabled: ${SEND_LETTER_SERVICE_ENABLED:false}
+  enabled: ${SEND_LETTER_SERVICE_ENABLED:true}
   maxRetryAttempts: ${MAX_RETRY_ATTEMPTS:3}
 
 idam:
@@ -91,10 +91,25 @@ robotics:
 docmosis:
   template:
     dl6:
-      templateName: TB-SCS-GNO-ENG-00010.doc
+      name: TB-SCS-GNO-ENG-00010.doc
     dl16:
-      templateName: TB-SCS-GNO-ENG-00011.doc
+      name: TB-SCS-GNO-ENG-00011.doc
+    609-97:
+      name: TB-SCS-GNO-ENG-00068.doc
+    609-98:
+      name: TB-SCS-GNO-ENG-00069.doc
 
 evidence-share:
   submit-types:
   - PAPER
+
+feature:
+  bundle-stitching:
+    enabled: true
+
+exela:
+  addressLine1: HMCTS SSCS
+  addressLine2: PO BOX 12626
+  addressLine3: Harlow
+  addressPostcode: CM20 9QF
+
